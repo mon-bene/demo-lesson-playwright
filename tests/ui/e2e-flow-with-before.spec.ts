@@ -48,3 +48,34 @@ test('login and log out', async ({}) => {
   await orderCreationPage.logOutButton.click()
   await expect.soft(authPage.signInButton).toBeEnabled()
 })
+
+test('Verify language container on Login page', async ({}) => {
+  await authPage.checkLanguageSelector()
+  await authPage.checkLPrivacyLink()
+})
+
+test('Verifying language container on Order page', async ({}) => {
+  const orderCreationPage = await authPage.signIn(USERNAME, PASSWORD)
+  await orderCreationPage.checkLanguageSelector()
+  await orderCreationPage.checkLPrivacyLink()
+})
+
+test('check that order exist', async ({}) => {
+  const orderCreationPage = await authPage.signIn(USERNAME, PASSWORD)
+  await orderCreationPage.statusButton.click()
+  await orderCreationPage.searchOrderInput.fill('1998')
+  const orderFoundPage = await orderCreationPage.clickTrackAndReturnOrderFoundPage()
+  //await expect(orderFoundPage.page.locator('css=status-list_status_active')).toBeVisible()
+  await expect(orderFoundPage.openStatus).toBeVisible()
+  await expect (orderFoundPage.openStatus).toHaveCSS('background-color', 'rgb(253, 204, 0)')
+})
+
+test('Check that order is not found', async ({}) => {
+  const orderCreationPage = await authPage.signIn(USERNAME, PASSWORD)
+  await orderCreationPage.statusButton.click()
+  await orderCreationPage.searchOrderInput.fill('000')
+  const orderNotFoundPage = await orderCreationPage.clickTrackAndReturnOrderNOtFoundPage()
+  await expect(orderNotFoundPage.orderNotFoundContainer).toBeVisible()
+
+})
+
